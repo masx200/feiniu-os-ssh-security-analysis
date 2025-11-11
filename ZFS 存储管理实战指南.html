@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <link rel="stylesheet" href="./src/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+      name="description"
+      content="ZFS存储管理实战指南，详细介绍从磁盘添加到一致性检查的完整操作流程。包含zpool和zfs命令大全、存储池管理、硬盘构成分析、性能优化建议和故障排除方法。涵盖Stripe(RAID 0)、镜像、RAID-Z等配置方案，为ZFS用户提供系统性的技术参考和最佳实践指导。"
+    >
+    <title>ZFS 存储管理实战指南：从磁盘添加到一致性检查</title>
+    <link rel="icon" href="vite.svg" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    >
+    <style>
+      body {
+        font-family: "Noto Sans SC", sans-serif;
+        background-color: #ffffff;
+      }
+      .card {
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 1.25rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        overflow: hidden;
+        position: relative;
+      }
+      .highlight-gradient-blue {
+        background: linear-gradient(
+          135deg,
+          rgba(59, 130, 246, 0),
+          rgba(59, 130, 246, 0.05)
+        );
+      }
+      .highlight-gradient-green {
+        background: linear-gradient(
+          135deg,
+          rgba(34, 197, 94, 0),
+          rgba(34, 197, 94, 0.05)
+        );
+      }
+      .highlight-gradient-amber {
+        background: linear-gradient(
+          135deg,
+          rgba(245, 158, 11, 0),
+          rgba(245, 158, 11, 0.05)
+        );
+      }
+      .highlight-gradient-red {
+        background: linear-gradient(
+          135deg,
+          rgba(239, 68, 68, 0),
+          rgba(239, 68, 68, 0.05)
+        );
+      }
+      .highlight-gradient-purple {
+        background: linear-gradient(
+          135deg,
+          rgba(168, 85, 247, 0),
+          rgba(168, 85, 247, 0.05)
+        );
+      }
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+      }
+      .code-block {
+        background-color: #1f2937;
+        color: #f3f4f6;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 0.875rem;
+        overflow-x: auto;
+      }
+      .command-output {
+        background-color: #111827;
+        color: #9ca3af;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 0.75rem;
+        overflow-x: auto;
+      }
+      .info-box {
+        background-color: #eff6ff;
+        border-left: 4px solid #3b82f6;
+        padding: 1rem;
+        border-radius: 0.5rem;
+      }
+      .warning-box {
+        background-color: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 1rem;
+        border-radius: 0.5rem;
+      }
+      .success-box {
+        background-color: #d1fae5;
+        border-left: 4px solid #10b981;
+        padding: 1rem;
+        border-radius: 0.5rem;
+      }
+      .danger-box {
+        background-color: #fee2e2;
+        border-left: 4px solid #ef4444;
+        padding: 1rem;
+        border-radius: 0.5rem;
+      }
+    </style>
+  </head>
+  <body class="bg-white">
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+        <!-- 标题卡片 -->
+        <div
+          class="card md:col-span-4 md:row-span-1 p-8 flex flex-col justify-center"
+        >
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-blue"
+          >
+          </div>
+          <div class="relative">
+            <div class="flex items-center mb-4">
+              <i class="fa-solid fa-hard-drive text-3xl text-blue-500 mr-4"></i>
+              <h1 class="text-4xl md:text-5xl font-black text-gray-800">
+                ZFS 存储管理实战指南
+              </h1>
+            </div>
+            <p class="text-xl text-gray-600 font-medium">
+              从磁盘添加到一致性检查的完整操作记录
+            </p>
+            <div class="mt-6 flex items-center text-sm text-gray-500">
+              <i class="fa-solid fa-server mr-2"></i>
+              <span>技术实战</span>
+              <span class="mx-3">|</span>
+              <i class="fa-solid fa-database mr-2"></i>
+              <span>存储管理</span>
+              <span class="mx-3">|</span>
+              <i class="fa-solid fa-cogs mr-2"></i>
+              <span>ZFS 2.3.3</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 环境概览卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-green"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-desktop text-green-500 mr-3"></i>
+              环境概览
+            </h2>
+            <div class="space-y-3">
+              <div class="bg-white rounded-lg p-3 border border-gray-200">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-server text-blue-500 mr-2"></i>
+                  <span class="font-medium text-sm">操作系统</span>
+                </div>
+                <p class="text-xs text-gray-600">Linux + ZFS 2.3.3-1</p>
+              </div>
+              <div class="bg-white rounded-lg p-3 border border-gray-200">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-network-wired text-blue-500 mr-2"></i>
+                  <span class="font-medium text-sm">服务器</span>
+                </div>
+                <p class="text-xs text-gray-600">192.168.31.245</p>
+              </div>
+              <div class="bg-white rounded-lg p-3 border border-gray-200">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-hdd text-blue-500 mr-2"></i>
+                  <span class="font-medium text-sm">虚拟化平台</span>
+                </div>
+                <p class="text-xs text-gray-600">Microsoft Hyper-V</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 存储配置卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-amber"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-database text-amber-500 mr-3"></i>
+              存储池配置
+            </h2>
+            <div class="space-y-3">
+              <div class="bg-amber-50 rounded-lg p-3">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-layer-group text-amber-500 mr-2"></i>
+                  <span class="font-medium text-sm">存储池 1</span>
+                </div>
+                <p class="text-xs text-gray-700">Stripe (RAID 0) - 325 GB</p>
+                <p class="text-xs text-gray-600">2磁盘：127GB + 200GB</p>
+              </div>
+              <div class="bg-amber-50 rounded-lg p-3">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-layer-group text-amber-500 mr-2"></i>
+                  <span class="font-medium text-sm">存储池 2</span>
+                </div>
+                <p class="text-xs text-gray-700">Single Disk - 334 GB</p>
+                <p class="text-xs text-gray-600">1磁盘：336GB</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 操作指南卡片 -->
+        <div class="card md:col-span-2 md:row-span-2 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-purple"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-list-check text-purple-500 mr-3"></i>
+              操作指南
+            </h2>
+            <div class="space-y-4">
+              <div class="border-l-4 border-purple-500 pl-4">
+                <h3 class="font-semibold text-gray-800">1. 初始状态检查</h3>
+                <div class="code-block text-sm mt-2">
+                  zpool status && zpool list
+                </div>
+              </div>
+              <div class="border-l-4 border-purple-500 pl-4">
+                <h3 class="font-semibold text-gray-800">2. 添加新磁盘</h3>
+                <div class="code-block text-sm mt-2">
+                  zpool add poolname /dev/sdx
+                </div>
+              </div>
+              <div class="border-l-4 border-purple-500 pl-4">
+                <h3 class="font-semibold text-gray-800">3. 执行一致性检查</h3>
+                <div class="code-block text-sm mt-2">
+                  zpool scrub poolname
+                </div>
+              </div>
+              <div class="border-l-4 border-purple-500 pl-4">
+                <h3 class="font-semibold text-gray-800">4. 监控扫描进度</h3>
+                <div class="code-block text-sm mt-2">
+                  zpool status -T d poolname
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 关键命令卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-red"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-terminal text-red-500 mr-3"></i>
+              核心命令快速参考
+            </h2>
+            <div class="space-y-3">
+              <div class="command-output text-xs">
+                <div class="text-green-400 mb-1"># 存储池管理</div>
+                zpool create poolname /dev/sda<br>
+                zpool add poolname /dev/sdb<br>
+                zpool status<br>
+                zpool list
+              </div>
+              <div class="command-output text-xs">
+                <div class="text-green-400 mb-1"># 数据集管理</div>
+                zfs create poolname/data<br>
+                zfs set compression=lz4 poolname<br>
+                zfs snapshot poolname@backup
+              </div>
+              <div class="command-output text-xs">
+                <div class="text-green-400 mb-1"># 备份恢复</div>
+                zfs send pool@snap | recv backup<br>
+                zfs rollback pool@backup
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 硬件布局卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-green"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-microchip text-green-500 mr-3"></i>
+              硬盘构成分析
+            </h2>
+            <div class="space-y-3">
+              <div class="bg-green-50 rounded-lg p-3">
+                <div class="flex justify-between items-center">
+                  <span class="font-medium text-sm">/dev/sda</span>
+                  <span class="text-xs bg-green-200 px-2 py-1 rounded"
+                  >127 GB</span>
+                </div>
+                <p class="text-xs text-gray-600 mt-1">
+                  Microsoft 虚拟磁盘 - 数据盘
+                </p>
+              </div>
+              <div class="bg-green-50 rounded-lg p-3">
+                <div class="flex justify-between items-center">
+                  <span class="font-medium text-sm">/dev/sdb</span>
+                  <span class="text-xs bg-green-200 px-2 py-1 rounded"
+                  >400 GB</span>
+                </div>
+                <p class="text-xs text-gray-600 mt-1">
+                  系统盘 + 数据盘 (sdb3: 336GB)
+                </p>
+              </div>
+              <div class="bg-green-50 rounded-lg p-3">
+                <div class="flex justify-between items-center">
+                  <span class="font-medium text-sm">/dev/sdc</span>
+                  <span class="text-xs bg-green-200 px-2 py-1 rounded"
+                  >200 GB</span>
+                </div>
+                <p class="text-xs text-gray-600 mt-1">
+                  新增数据盘 - 已添加到存储池
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 检查结果卡片 -->
+        <div class="card md:col-span-4 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-blue"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-check-circle text-blue-500 mr-3"></i>
+              一致性检查结果
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-blue-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-database text-blue-500 mr-2"></i>
+                  <h3 class="font-semibold text-gray-800">存储池 1 (Stripe)</h3>
+                </div>
+                <div class="text-sm text-gray-700 space-y-1">
+                  <p>• 扫描时间：3秒</p>
+                  <p>• 修复数据：0B</p>
+                  <p>• 错误数量：0</p>
+                  <p>• 状态：✅ 健康</p>
+                </div>
+              </div>
+              <div class="bg-blue-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-database text-blue-500 mr-2"></i>
+                  <h3 class="font-semibold text-gray-800">存储池 2 (Single)</h3>
+                </div>
+                <div class="text-sm text-gray-700 space-y-1">
+                  <p>• 扫描时间：12秒</p>
+                  <p>• 修复数据：0B</p>
+                  <p>• 错误数量：0</p>
+                  <p>• 状态：✅ 健康</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 最佳实践卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-amber"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-star text-amber-500 mr-3"></i>
+              最佳实践建议
+            </h2>
+            <div class="space-y-3">
+              <div class="bg-amber-50 rounded-lg p-3">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-check text-green-500 mr-2"></i>
+                  <span class="font-medium text-sm">定期执行 Scrub</span>
+                </div>
+                <p class="text-xs text-gray-600">
+                  每月至少执行一次数据完整性检查
+                </p>
+              </div>
+              <div class="bg-amber-50 rounded-lg p-3">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-check text-green-500 mr-2"></i>
+                  <span class="font-medium text-sm">启用压缩</span>
+                </div>
+                <p class="text-xs text-gray-600">
+                  使用 lz4 压缩算法提升存储效率
+                </p>
+              </div>
+              <div class="bg-amber-50 rounded-lg p-3">
+                <div class="flex items-center mb-2">
+                  <i
+                    class="fa-solid fa-exclamation-triangle text-amber-500 mr-2"
+                  ></i>
+                  <span class="font-medium text-sm">注意 RAID 0 风险</span>
+                </div>
+                <p class="text-xs text-gray-600">
+                  Stripe配置无冗余，重要数据需额外备份
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 性能优化卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-purple"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-tachometer-alt text-purple-500 mr-3"></i>
+              性能优化配置
+            </h2>
+            <div class="space-y-3">
+              <div class="bg-purple-50 rounded-lg p-3">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-cog text-purple-500 mr-2"></i>
+                  <span class="font-medium text-sm">压缩设置</span>
+                </div>
+                <div class="code-block text-xs mt-1">
+                  zfs set compression=lz4 poolname
+                </div>
+              </div>
+              <div class="bg-purple-50 rounded-lg p-3">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-clock text-purple-500 mr-2"></i>
+                  <span class="font-medium text-sm">禁用访问时间</span>
+                </div>
+                <div class="code-block text-xs mt-1">
+                  zfs set atime=off poolname
+                </div>
+              </div>
+              <div class="bg-purple-50 rounded-lg p-3">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-file-alt text-purple-500 mr-2"></i>
+                  <span class="font-medium text-sm">记录大小</span>
+                </div>
+                <div class="code-block text-xs mt-1">
+                  zfs set recordsize=128K poolname
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 常见问题卡片 -->
+        <div class="card md:col-span-4 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-red"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-question-circle text-red-500 mr-3"></i>
+              故障排除与解决方案
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-red-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-tools text-red-500 mr-2"></i>
+                  <h3 class="font-semibold text-gray-800">设备故障</h3>
+                </div>
+                <div class="text-sm text-gray-700">
+                  <p class="mb-2">标记离线并替换：</p>
+                  <div class="code-block text-xs">
+                    zpool offline pool /dev/sdb<br>
+                    zpool replace pool /dev/sdb /dev/sdc
+                  </div>
+                </div>
+              </div>
+              <div class="bg-red-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-download text-red-500 mr-2"></i>
+                  <h3 class="font-semibold text-gray-800">导入问题</h3>
+                </div>
+                <div class="text-sm text-gray-700">
+                  <p class="mb-2">强制导入存储池：</p>
+                  <div class="code-block text-xs">
+                    zpool import -f poolname<br>
+                    zpool import -d /dev/disk/by-id pool
+                  </div>
+                </div>
+              </div>
+              <div class="bg-red-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-eraser text-red-500 mr-2"></i>
+                  <h3 class="font-semibold text-gray-800">清理标签</h3>
+                </div>
+                <div class="text-sm text-gray-700">
+                  <p class="mb-2">清除设备标识：</p>
+                  <div class="code-block text-xs">
+                    zpool labelclear /dev/sdd<br>
+                    wipefs -a /dev/sdd
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 技术规格卡片 -->
+        <div class="card md:col-span-4 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-green"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-info-circle text-green-500 mr-3"></i>
+              技术要点总结
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-green-50 rounded-lg p-4">
+                <h3 class="font-semibold text-gray-800 mb-3">✅ 成功经验</h3>
+                <ul class="text-sm text-gray-700 space-y-1">
+                  <li>• 成功添加200GB磁盘到存储池</li>
+                  <li>• 存储池容量从126GB增至325GB</li>
+                  <li>• 所有存储池完整性检查通过</li>
+                  <li>• 系统运行稳定，无数据错误</li>
+                  <li>• Stripe配置提供了良好的性能</li>
+                </ul>
+              </div>
+              <div class="bg-amber-50 rounded-lg p-4">
+                <h3 class="font-semibold text-gray-800 mb-3">⚠️ 注意事项</h3>
+                <ul class="text-sm text-gray-700 space-y-1">
+                  <li>• RAID 0配置无冗余保护</li>
+                  <li>• 重要数据需额外备份</li>
+                  <li>• 定期监控存储池健康状态</li>
+                  <li>• 使用设备ID而非设备名</li>
+                  <li>• 谨慎启用去重功能</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script
+    type="module"
+    src="./ZFS 存储管理实战指南/ZFS 存储管理实战指南：从磁盘添加到一致性检查.js"
+  >
+  </script>
+</html>

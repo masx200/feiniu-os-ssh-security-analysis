@@ -1,0 +1,178 @@
+version: "3.6"
+
+networks:
+  warp-network:
+    external: true
+    name: "warp-network"
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: "172.31.124.0/24"
+        - subnet: "fd12:5687:4425:5556::/64"
+
+services:
+  # HTTP Proxy Go Server
+  http-proxy-go-server:
+    domainname: http-proxy-go-server
+    privileged: true
+    networks:
+      - "warp-network"
+    ports:
+      - "58877:58877/tcp"
+    command:
+      - "sh"
+      - "-c"
+      - "-x"
+      - |
+          './main' \
+          '-dohurl' 'https://doh-server.masx200.ddns-ip.net' \
+          '-dohip' '104.21.14.41' \
+          '--dohalpn=h2' \
+          '-port' '58877' \
+          '-username' 'admin' \
+          '-password' '${password}' \
+          '-dohalpn=h3' \
+          '-dohurl' 'https://doh-server.masx200.ddns-ip.net' \
+          '--dohip=2606:4700:3031::ac43:9db6' \
+          '-dohurl' 'https://one.one.one.one/dns-query' \
+          '-dohip' '1.0.0.1' \
+          '--dohalpn=h2' \
+          '-dohurl' 'https://one.one.one.one/dns-query' \
+          '-dohip' '2606:4700:4700::1001' \
+          '--dohalpn=h2' \
+          '-dohurl' 'https://security.cloudflare-dns.com/dns-query' \
+          '-dohip' '1.0.0.2' \
+          '--dohalpn=h2' \
+          '-dohurl' 'https://one.one.one.one/dns-query' \
+          '-dohip' '1.0.0.1' \
+          '--dohalpn=h3' \
+          '-dohurl' 'https://one.one.one.one/dns-query' \
+          '-dohip' '2606:4700:4700::1001' \
+          '--dohalpn=h3'
+    container_name: "http-proxy-go-server"
+    environment:
+      - "GOLANG_VERSION=1.24.4"
+      - "GOTOOLCHAIN=local"
+      - "GOPATH=/go"
+      - "TZ=Asia/Shanghai"
+      - "PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "password=${password}"
+    image: "docker.cnb.cool/masx200/docker_mirror/http-proxy-go-server:2.6.0"
+    ipc: "private"
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "100m"
+    restart: "always"
+    stdin_open: true
+    tty: true
+    working_dir: "/app"
+
+  # WARP Docker Service
+  warp-docker:
+    depends_on:
+      - "http-proxy-go-server"
+    network_mode: "container:http-proxy-go-server"
+    cap_add:
+      - MKNOD
+      - AUDIT_WRITE
+      - "NET_ADMIN"
+    container_name: "warp-docker"
+    sysctls:
+      - "net.ipv6.conf.all.disable_ipv6=0"
+      - "net.ipv4.conf.all.src_valid_mark=1"
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    entrypoint: ["bash", "-x", "/entrypoint.sh", "/status.sh"]
+    environment:
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    image: "docker.cnb.cool/masx200/docker_mirror/warp-docker:2025.8.779.0"
+    ipc: "private"
+    logging:
+      driver: "json-file"
+      options: {}
+    privileged: true
+    restart: "always"
+    security_opt:
+      - "label=disable"
+    stdin_open: true
+    tty: true
+
+  # CURL Monitor Service
+  curl-monitor:
+    depends_on:
+      - "http-proxy-go-server"
+    privileged: true
+    user: "0:0"
+    image: registry.cn-hangzhou.aliyuncs.com/masx200/curl:2025-10-04-12-22-55
+    container_name: curl-monitor
+    networks:
+      - warp-network
+    command:
+      - /bin/sh
+      - "-c"
+      - "-x"
+      - |
+          while true; do
+            curl -v -I https://one.one.one.one -L -x http://http-proxy-go-server:58877 --proxy-user admin:${password} --http2;
+            sleep 20;
+            curl -x http://http-proxy-go-server:58877 --proxy-user admin:${password} -v https://ifconfig.co/json -L -H "Accept: application/json";
+            sleep 20;
+          done
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: "100m"
+    environment:
+      - "password=${password}"
+
+  # MeTube Service (with proxy support)
+  metube:
+    container_name: "metube"
+    image: alexta69/metube
+    ports:
+      - "8081:8081"
+    networks:
+      - warp-network
+    volumes:
+      - "/vol2/metubu/var/apps/metube/shares/metube/Downloads:/downloads"
+    entrypoint:
+      - "/sbin/tini"
+      - "-g"
+      - "--"
+      - "./docker-entrypoint.sh"
+    environment:
+      # 代理配置
+      - "HTTP_PROXY=http://admin:${password}@http-proxy-go-server:58877"
+      - "HTTPS_PROXY=http://admin:${password}@http-proxy-go-server:58877"
+      - "NO_PROXY=localhost,127.0.0.1,.local,192.168.,10.,172.16.,172.17.,172.18.,172.19.,172.20.,172.21.,172.22.,172.23.,172.24.,172.25.,172.26.,172.27.,172.28.,172.29.,172.30.,172.31."
+
+      # yt-dlp 代理配置
+      - "YTDL_OPTIONS={\"proxy\":\"http://admin:${password}@http-proxy-go-server:58877\",\"proxy_user\":\"admin\",\"proxy_password\":\"${password}\"}"
+
+      # 系统配置
+      - "TZ=Asia/Shanghai"
+      - "UID=1000"
+      - "GID=1000"
+      - "UMASK=022"
+      - "DOWNLOAD_DIR=/downloads"
+      - "STATE_DIR=/downloads/.metube"
+      - "TEMP_DIR=/downloads"
+      - "METUBE_VERSION=2025.10.23"
+      - "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305"
+      - "PYTHON_VERSION=3.13.9"
+      - "PYTHON_SHA256=ed5ef34cda36cfa2f3a340f07cac7e7814f91c7f3c411f6d3562323a866c5c66"
+
+    ipc: "private"
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "100m"
+    restart: "always"
+    working_dir: "/app"

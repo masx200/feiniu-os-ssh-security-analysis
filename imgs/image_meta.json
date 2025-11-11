@@ -1,0 +1,452 @@
+[
+  {
+    "query": "WARP架构技术图",
+    "image_info": {
+      "url": "https://developers.cloudflare.com/_astro/alternate-gateway.qFF4NOVp_Z2mO45W.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 12942,
+      "width": 565,
+      "height": 370,
+      "total_pixels": 209050,
+      "basic_score": 0.7579187342953468,
+      "file_name": "warp_architecture_8.webp"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "WARP架构技术图",
+    "image_info": {
+      "url": "https://developers.cloudflare.com/_astro/overview.CRSzOP-1_2tbbeT.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 17988,
+      "width": 985,
+      "height": 340,
+      "total_pixels": 334900,
+      "basic_score": 0.7532393006857683,
+      "file_name": "warp_architecture_0.webp"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "WARP架构技术图",
+    "image_info": {
+      "url": "https://developers.cloudflare.com/_astro/private-ips-diagram.BXgaklt9_1RJRC2.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 47526,
+      "width": 2530,
+      "height": 1144,
+      "total_pixels": 2894320,
+      "basic_score": 0.5139777597024459,
+      "file_name": "warp_architecture_1.webp"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "HTTP代理服务器架构图",
+    "image_info": {
+      "url": "https://media.geeksforgeeks.org/wp-content/uploads/20240503131755/Working-of-Server.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 42096,
+      "width": 1043,
+      "height": 746,
+      "total_pixels": 778078,
+      "basic_score": 0.9188137501515217,
+      "file_name": "proxy_architecture_8.webp"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "HTTP代理服务器架构图",
+    "image_info": {
+      "url": "https://media.geeksforgeeks.org/wp-content/uploads/20250804163627434033/proxy_server.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 15802,
+      "width": 800,
+      "height": 400,
+      "total_pixels": 320000,
+      "basic_score": 0.7873704866293904,
+      "file_name": "proxy_architecture_1.webp"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "HTTP代理服务器架构图",
+    "image_info": {
+      "url": "https://excitingip.com/wp-content/uploads/2011/01/proxyserverarchitecture.jpeg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 40629,
+      "width": 520,
+      "height": 373,
+      "total_pixels": 193960,
+      "basic_score": 0.7460548050729752,
+      "file_name": "proxy_architecture_5.jpeg"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "VPN与WARP对比图",
+    "image_info": {
+      "url": "https://www.ghacks.net/wp-content/uploads/2019/09/cloudflare-vpn-warp.png",
+      "img_format": "PNG",
+      "mode": "P",
+      "file_size": 49112,
+      "width": 1280,
+      "height": 877,
+      "total_pixels": 1122560,
+      "basic_score": 0.9168044895138703,
+      "file_name": "vpn_warp_comparison_5.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "VPN与WARP对比图",
+    "image_info": {
+      "url": "https://static.vpsbg.eu/storage/blog/comparison-table-between-the-vpn-protocols1_0Q.png",
+      "img_format": "PNG",
+      "mode": "P",
+      "file_size": 39155,
+      "width": 1116,
+      "height": 932,
+      "total_pixels": 1040112,
+      "basic_score": 0.9111578739195183,
+      "file_name": "vpn_warp_comparison_2.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "VPN与WARP对比图",
+    "image_info": {
+      "url": "https://webdevolutions.blob.core.windows.net/blog/2018/11/VPNCompareTable-Devolutions.png",
+      "img_format": "PNG",
+      "mode": "RGB",
+      "file_size": 153973,
+      "width": 1398,
+      "height": 936,
+      "total_pixels": 1308528,
+      "basic_score": 0.9086181267683662,
+      "file_name": "vpn_warp_comparison_4.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "Docker容器网络架构图",
+    "image_info": {
+      "url": "https://docs.docker.com/get-started/images/docker-architecture.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 41084,
+      "width": 1233,
+      "height": 651,
+      "total_pixels": 802683,
+      "basic_score": 0.9177659399687591,
+      "file_name": "docker_network_9.webp"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "Docker容器网络架构图",
+    "image_info": {
+      "url": "https://www.thinkevolveconsulting.com/wp-content/uploads/2023/12/docker-bridge-network-2.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 79532,
+      "width": 1564,
+      "height": 819,
+      "total_pixels": 1280916,
+      "basic_score": 0.8984000926393951,
+      "file_name": "docker_network_5.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "Docker容器网络架构图",
+    "image_info": {
+      "url": "https://miro.medium.com/v2/resize:fit:1400/0*kDJEckrqtk653KL_",
+      "img_format": "PNG",
+      "mode": "RGB",
+      "file_size": 188268,
+      "width": 1024,
+      "height": 519,
+      "total_pixels": 531456,
+      "basic_score": 0.8539041872318667,
+      "file_name": "docker_network_8.jpg"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "网络代理拓扑图",
+    "image_info": {
+      "url": "https://access.redhat.com/webassets/avalon/d/Red_Hat_Network_Satellite-5.4-Proxy_Installation_Guide-en-US/images/e04a769067e941f82d018fb36b98ebe2/rhns-proxy_topology3.png",
+      "img_format": "PNG",
+      "mode": "RGB",
+      "file_size": 26874,
+      "width": 1092,
+      "height": 576,
+      "total_pixels": 628992,
+      "basic_score": 0.8656200513494996,
+      "file_name": "network_topology_6.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "网络代理拓扑图",
+    "image_info": {
+      "url": "https://www.imfirewall.com/en/help/doc/images/cisco2950_ISA.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 44227,
+      "width": 522,
+      "height": 306,
+      "total_pixels": 159732,
+      "basic_score": 0.7321484544701699,
+      "file_name": "network_topology_7.jpg"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "网络代理拓扑图",
+    "image_info": {
+      "url": "https://help.fortinet.com/fweb/555/Content/FortiWeb/fortiweb-admin/Images/network_topology_inline1.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 36885,
+      "width": 480,
+      "height": 261,
+      "total_pixels": 125280,
+      "basic_score": 0.7067630552555355,
+      "file_name": "network_topology_5.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "网络代理流程图",
+    "image_info": {
+      "url": "https://images.squarespace-cdn.com/content/v1/540f5515e4b06c4e8629c108/1652255300726-SSRT8WDG65M339LVFXE5/diagram+of+a+simple+network+with+a+server.png",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 19166,
+      "width": 1000,
+      "height": 563,
+      "total_pixels": 563000,
+      "basic_score": 0.8735161049067206,
+      "file_name": "proxy_flow_5.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "网络代理流程图",
+    "image_info": {
+      "url": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20200714200713/How-Does-The-Proxy-Server-Operates.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 82044,
+      "width": 1164,
+      "height": 463,
+      "total_pixels": 538932,
+      "basic_score": 0.8131695274459301,
+      "file_name": "proxy_flow_7.jpg"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "网络代理流程图",
+    "image_info": {
+      "url": "https://media.geeksforgeeks.org/wp-content/uploads/20250804163627434033/proxy_server.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 15802,
+      "width": 800,
+      "height": 400,
+      "total_pixels": 320000,
+      "basic_score": 0.7873704866293904,
+      "file_name": "proxy_flow_4.webp"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "QUIC协议架构图",
+    "image_info": {
+      "url": "https://www.cdnetworks.com/wos/static-resource/9e836fbe17c141689830b64157c0ba9d/QUIC-PICTURE-05-1024x560.jpg?t=1740733716166",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 57998,
+      "width": 1024,
+      "height": 560,
+      "total_pixels": 573440,
+      "basic_score": 0.8696702798026636,
+      "file_name": "quic_protocol_8.jpg"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "QUIC协议架构图",
+    "image_info": {
+      "url": "https://www.debugbear.com/assets/images/http2-vs-quic-multiplexing-36d594c1c356cae410fe60cfc2945d91.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 81242,
+      "width": 900,
+      "height": 532,
+      "total_pixels": 478800,
+      "basic_score": 0.8465618390625422,
+      "file_name": "quic_protocol_5.jpg"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "QUIC协议架构图",
+    "image_info": {
+      "url": "https://blog.apnic.net/wp-content/uploads/2019/03/quic-fig1.png",
+      "img_format": "PNG",
+      "mode": "RGB",
+      "file_size": 36138,
+      "width": 919,
+      "height": 578,
+      "total_pixels": 531182,
+      "basic_score": 0.8457352694734911,
+      "file_name": "quic_protocol_1.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "零信任网络架构图",
+    "image_info": {
+      "url": "https://rhisac.org/wp-content/uploads/Getting-Started-with-Zero-Trust-Architecture-1024x1024.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 78151,
+      "width": 1024,
+      "height": 1024,
+      "total_pixels": 1048576,
+      "basic_score": 0.9244608437795658,
+      "file_name": "zero_trust_2.jpg"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "零信任网络架构图",
+    "image_info": {
+      "url": "https://media.geeksforgeeks.org/wp-content/uploads/20240909155125/Steps-to-Design-a-Zero-Trust-System.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 109225,
+      "width": 1042,
+      "height": 745,
+      "total_pixels": 776290,
+      "basic_score": 0.9055913298909763,
+      "file_name": "zero_trust_7.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "零信任网络架构图",
+    "image_info": {
+      "url": "https://www.onx.com/wp-content/uploads/2022/02/OnX_Zero_Trust_Networks_Digram.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 141971,
+      "width": 1024,
+      "height": 569,
+      "total_pixels": 582656,
+      "basic_score": 0.8718274441617444,
+      "file_name": "zero_trust_8.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "Docker Compose网络架构图",
+    "image_info": {
+      "url": "https://docs.docker.com/compose/images/compose-application.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 47852,
+      "width": 1874,
+      "height": 714,
+      "total_pixels": 1338036,
+      "basic_score": 0.8488732346019688,
+      "file_name": "docker_compose_2.webp"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "Docker Compose网络架构图",
+    "image_info": {
+      "url": "https://docker-k8s-lab.readthedocs.io/en/latest/_images/docker-compose.png",
+      "img_format": "PNG",
+      "mode": "RGB",
+      "file_size": 75590,
+      "width": 1572,
+      "height": 1048,
+      "total_pixels": 1647456,
+      "basic_score": 0.8284244450145652,
+      "file_name": "docker_compose_1.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "Docker Compose网络架构图",
+    "image_info": {
+      "url": "https://uploads-ssl.webflow.com/62654d3158a08cb4c5e2c1c6/627d20b1b939a7e5ba1ada25_1ac8e8aa64f963d0a3c919a7b21070821afaff3b.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 37741,
+      "width": 731,
+      "height": 561,
+      "total_pixels": 410091,
+      "basic_score": 0.8132720161928962,
+      "file_name": "docker_compose_6.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "容器化最佳实践图",
+    "image_info": {
+      "url": "https://www.simform.com/wp-content/uploads/2022/05/how-docker-images-work.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 562028,
+      "width": 1437,
+      "height": 808,
+      "total_pixels": 1161096,
+      "basic_score": 0.9506946972187392,
+      "file_name": "container_best_practices_4.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "容器化最佳实践图",
+    "image_info": {
+      "url": "https://www.simform.com/wp-content/uploads/2022/05/container-security-best-practices.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 366190,
+      "width": 1436,
+      "height": 724,
+      "total_pixels": 1039664,
+      "basic_score": 0.9330356717483643,
+      "file_name": "container_best_practices_0.png"
+    },
+    "llm_score": null
+  },
+  {
+    "query": "容器化最佳实践图",
+    "image_info": {
+      "url": "https://www.simform.com/wp-content/uploads/2022/06/Containerization-Best-Practices-1.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 252794,
+      "width": 1200,
+      "height": 627,
+      "total_pixels": 752400,
+      "basic_score": 0.9100161399749774,
+      "file_name": "container_best_practices_1.png"
+    },
+    "llm_score": null
+  }
+]

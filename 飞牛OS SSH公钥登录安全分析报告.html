@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta
+      name="description"
+      content="针对飞牛OS SSH公钥登录机制的全面安全分析报告，涵盖权限管理、认证机制配置、环境兼容性、安全风险评估等核心维度。详细分析现有教程的安全隐患，提供标准化配置流程和优先级建议，包括权限设置、认证强化、网络安全加固等关键技术要点，为飞牛OS用户建立安全可靠的SSH访问环境提供科学指导。"
+    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飞牛OS SSH公钥登录安全分析报告</title>
+    <link rel="icon" href="vite.svg" />
+<link
+      href="/src/style.css"
+      rel="stylesheet"/>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    >
+    <style>
+      body {
+        font-family: "Noto Sans SC", sans-serif;
+        background-color: #ffffff;
+      }
+      .card {
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 1.25rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        overflow: hidden;
+        position: relative;
+      }
+      .highlight-gradient-blue {
+        background: linear-gradient(
+          135deg,
+          rgba(59, 130, 246, 0),
+          rgba(59, 130, 246, 0.05)
+        );
+      }
+      .highlight-gradient-green {
+        background: linear-gradient(
+          135deg,
+          rgba(34, 197, 94, 0),
+          rgba(34, 197, 94, 0.05)
+        );
+      }
+      .highlight-gradient-amber {
+        background: linear-gradient(
+          135deg,
+          rgba(245, 158, 11, 0),
+          rgba(245, 158, 11, 0.05)
+        );
+      }
+      .highlight-gradient-red {
+        background: linear-gradient(
+          135deg,
+          rgba(239, 68, 68, 0),
+          rgba(239, 68, 68, 0.05)
+        );
+      }
+      .highlight-gradient-purple {
+        background: linear-gradient(
+          135deg,
+          rgba(168, 85, 247, 0),
+          rgba(168, 85, 247, 0.05)
+        );
+      }
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+      }
+    </style>
+  </head>
+  <body class="bg-white">
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+        <!-- 标题卡片 -->
+        <div
+          class="card md:col-span-4 md:row-span-1 p-8 flex flex-col justify-center"
+        >
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-blue"
+          >
+          </div>
+          <div class="relative">
+            <div class="flex items-center mb-4">
+              <i class="fa-solid fa-server text-3xl text-blue-500 mr-4"></i>
+              <h1 class="text-4xl md:text-5xl font-black text-gray-800">
+                飞牛OS SSH公钥登录
+              </h1>
+            </div>
+            <p class="text-xl text-gray-600 font-medium">
+              安全分析与优化建议报告
+            </p>
+            <div class="mt-6 flex items-center text-sm text-gray-500">
+              <i class="fa-solid fa-calendar-alt mr-2"></i>
+              <span>技术研究报告</span>
+              <span class="mx-3">|</span>
+              <i class="fa-solid fa-shield-halved mr-2"></i>
+              <span>安全评估</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 分析维度卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-green"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i
+                class="fa-solid fa-magnifying-glass-chart text-green-500 mr-3"
+              ></i>
+              分析维度
+            </h2>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-green-50 rounded-lg p-3 flex items-center">
+                <i class="fa-solid fa-check-circle text-green-500 mr-2"></i>
+                <span class="text-sm font-medium">技术正确性</span>
+              </div>
+              <div class="bg-green-50 rounded-lg p-3 flex items-center">
+                <i class="fa-solid fa-shield-halved text-green-500 mr-2"></i>
+                <span class="text-sm font-medium">安全性评估</span>
+              </div>
+              <div class="bg-green-50 rounded-lg p-3 flex items-center">
+                <i class="fa-solid fa-microchip text-green-500 mr-2"></i>
+                <span class="text-sm font-medium">环境兼容性</span>
+              </div>
+              <div class="bg-green-50 rounded-lg p-3 flex items-center">
+                <i class="fa-solid fa-hand-pointer text-green-500 mr-2"></i>
+                <span class="text-sm font-medium">操作便捷性</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 现有教程问题卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-amber"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i
+                class="fa-solid fa-exclamation-triangle text-amber-500 mr-3"
+              ></i>
+              现有教程主要问题
+            </h2>
+            <ul class="space-y-2 text-sm text-gray-700">
+              <li class="flex items-start">
+                <i
+                  class="fa-solid fa-times-circle text-amber-500 mt-1 mr-2"
+                ></i>
+                <span>权限设置说明缺失，存在严重安全隐患</span>
+              </li>
+              <li class="flex items-start">
+                <i
+                  class="fa-solid fa-times-circle text-amber-500 mt-1 mr-2"
+                ></i>
+                <span>认证机制配置不完整，未禁用密码认证</span>
+              </li>
+              <li class="flex items-start">
+                <i
+                  class="fa-solid fa-times-circle text-amber-500 mt-1 mr-2"
+                ></i>
+                <span>密钥管理流程复杂，缺乏标准化指南</span>
+              </li>
+              <li class="flex items-start">
+                <i
+                  class="fa-solid fa-times-circle text-amber-500 mt-1 mr-2"
+                ></i>
+                <span>文档清晰度不足，版本差异说明不充分</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 安全风险评估卡片 -->
+        <div class="card md:col-span-2 md:row-span-2 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-red"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-bug text-red-500 mr-3"></i>
+              安全风险评估
+            </h2>
+            <div class="h-64">
+              <canvas id="riskChart"></canvas>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                <span>高风险</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-amber-500 mr-2"></div>
+                <span>中风险</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                <span>低风险</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-gray-400 mr-2"></div>
+                <span>已缓解</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 配置方法对比卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-purple"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-code-branch text-purple-500 mr-3"></i>
+              配置方法对比
+            </h2>
+            <div class="space-y-4">
+              <div class="border-l-4 border-blue-500 pl-4">
+                <h3 class="font-semibold text-gray-800">官方图形化配置</h3>
+                <p class="text-sm text-gray-600">
+                  Web管理界面配置，操作简单但功能有限
+                </p>
+              </div>
+              <div class="border-l-4 border-purple-500 pl-4">
+                <h3 class="font-semibold text-gray-800">社区SSH配置修改</h3>
+                <p class="text-sm text-gray-600">
+                  手动修改配置文件，功能完整但风险较高
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 环境兼容性卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-green"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-desktop text-green-500 mr-3"></i>
+              环境兼容性
+            </h2>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-white rounded-lg p-3 border border-gray-200">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-server text-blue-500 mr-2"></i>
+                  <span class="font-medium text-sm">硬件平台</span>
+                </div>
+                <p class="text-xs text-gray-600">仅支持x86，不支持ARM</p>
+              </div>
+              <div class="bg-white rounded-lg p-3 border border-gray-200">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-vmware text-blue-500 mr-2"></i>
+                  <span class="font-medium text-sm">虚拟化</span>
+                </div>
+                <p class="text-xs text-gray-600">支持PVE、ESXi、VMware</p>
+              </div>
+              <div class="bg-white rounded-lg p-3 border border-gray-200">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-cubes text-blue-500 mr-2"></i>
+                  <span class="font-medium text-sm">容器化</span>
+                </div>
+                <p class="text-xs text-gray-600">原生Docker支持</p>
+              </div>
+              <div class="bg-white rounded-lg p-3 border border-gray-200">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-network-wired text-blue-500 mr-2"></i>
+                  <span class="font-medium text-sm">网络</span>
+                </div>
+                <p class="text-xs text-gray-600">IPv4良好，IPv6存在安全隐患</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 安全优化建议卡片 -->
+        <div class="card md:col-span-4 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-blue"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-lightbulb text-blue-500 mr-3"></i>
+              核心安全优化建议
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-blue-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-key text-blue-500 mr-2"></i>
+                  <h3 class="font-semibold text-gray-800">权限管理优化</h3>
+                </div>
+                <ul class="text-sm text-gray-700 space-y-1">
+                  <li>• .ssh目录权限设为700</li>
+                  <li>• authorized_keys文件权限设为600</li>
+                  <li>• 严格控制文件所有权</li>
+                </ul>
+              </div>
+              <div class="bg-blue-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-ban text-blue-500 mr-2"></i>
+                  <h3 class="font-semibold text-gray-800">认证机制强化</h3>
+                </div>
+                <ul class="text-sm text-gray-700 space-y-1">
+                  <li>• 禁用密码认证</li>
+                  <li>• 使用强加密算法</li>
+                  <li>• 考虑双因素认证</li>
+                </ul>
+              </div>
+              <div class="bg-blue-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                  <i class="fa-solid fa-firewall text-blue-500 mr-2"></i>
+                  <h3 class="font-semibold text-gray-800">网络安全加固</h3>
+                </div>
+                <ul class="text-sm text-gray-700 space-y-1">
+                  <li>• 修改默认SSH端口</li>
+                  <li>• 配置IP地址过滤</li>
+                  <li>• 部署fail2ban防护</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 实施优先级卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-amber"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-list-ol text-amber-500 mr-3"></i>
+              实施优先级建议
+            </h2>
+            <div class="space-y-3">
+              <div class="flex items-center">
+                <div
+                  class="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs font-bold mr-3"
+                >
+                  1
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-800">权限管理标准化</h3>
+                  <p class="text-xs text-gray-600">
+                    立即实施，解决核心安全隐患
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div
+                  class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-bold mr-3"
+                >
+                  2
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-800">认证机制安全化</h3>
+                  <p class="text-xs text-gray-600">短期实施，禁用密码认证</p>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div
+                  class="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-xs font-bold mr-3"
+                >
+                  3
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-800">图形化界面开发</h3>
+                  <p class="text-xs text-gray-600">长期规划，提升用户体验</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 关键配置命令卡片 -->
+        <div class="card md:col-span-2 md:row-span-1 p-6 flex flex-col">
+          <div
+            class="absolute top-0 left-0 w-full h-full highlight-gradient-purple"
+          >
+          </div>
+          <div class="relative flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fa-solid fa-terminal text-purple-500 mr-3"></i>
+              关键配置命令
+            </h2>
+            <div class="bg-gray-900 rounded-lg p-3 text-sm">
+              <div class="text-green-400 mb-2"># 生成强密钥对</div>
+              <div class="text-blue-300 mb-3">
+                ssh-keygen -t ed25519 -b 4096 -C "your_email@example.com"
+              </div>
+
+              <div class="text-green-400 mb-2"># 设置正确权限</div>
+              <div class="text-blue-300 mb-3">
+                chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys
+              </div>
+
+              <div class="text-green-400 mb-2"># 重启SSH服务</div>
+              <div class="text-blue-300">sudo systemctl restart sshd</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script
+    type="module"
+    src="./飞牛OS SSH公钥登录安全分析报告/飞牛OS SSH公钥登录安全分析报告.js"
+  >
+  </script>
+</html>

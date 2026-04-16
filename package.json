@@ -13,7 +13,7 @@
     "@tailwindcss/vite": "^4.1.16",
     "@types/prismjs": "^1.26.5",
     "rollup-plugin-html-minifier": "^2.0.0",
-    "vite": "^7.1.7",
+    "vite": "^7.3.2",
     "vite-plugin-prismjs": "^0.0.11",
     "vite-plugin-pwa": "^1.1.0"
   },
